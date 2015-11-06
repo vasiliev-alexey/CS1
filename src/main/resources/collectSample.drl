@@ -1,0 +1,83 @@
+package  t1;
+import com.av.domain.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+
+declare Index
+   S1 : String
+   S2 : String
+end
+
+declare Index2
+   S1 : String
+   S2 : String
+end
+
+
+
+
+
+
+dialect  "mvel"
+
+rule "collectSample"
+salience 100
+   when
+$h : R124()
+$l:   R124Item ($l.ppp == "100") from $h.getLines()
+/*$inds : HashSet() from collect (Index()*/
+
+
+
+    then
+//
+//System.out.println($h);
+//System.out.println($r);
+Index i = new Index();
+i.S1=$l.ppp;
+i.S2=$l.kosgu;
+
+
+insert(i);
+insert($l)
+
+end
+
+
+rule "2"
+salience 99
+when  $ind : Set() from accumulate (Index( $s1 : S1 , $s2:S2) , collectSet($s2))
+
+
+then
+
+
+System.out.println( "ind=" +$ind);
+
+
+ end
+
+
+
+
+rule "1"
+when
+
+
+
+$i : Set() from accumulate (Index( $s1 : S1 , $s2:S2) , collectSet($s2))
+$l: ArrayList()   from collect ( R124Item( ) )
+$line: R124Item()
+$sum:  Number() from accumulate (R124Item( $line.kosgu == kosgu  , $data001: data001),sum($data001))
+
+then
+//System.out.println("333");
+
+if( $i.contains($line.kosgu)) {
+
+}
+ System.out.println( $i  + " " + " " +  $sum );
+
+ end
